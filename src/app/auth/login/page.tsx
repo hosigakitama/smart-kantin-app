@@ -25,7 +25,7 @@ export default function LoginPage() {
 
       setType('success')
       setMessage('Login berhasil! Mengarahkan...')
-      setTimeout(() => router.push(`/${role}`), 1500)
+      setTimeout(() => router.push(`/${role}/dashboard`), 1500)
     } catch (error: any) {
       setType('error')
       setMessage(error.message || 'Login gagal.')
