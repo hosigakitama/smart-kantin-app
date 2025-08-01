@@ -1,10 +1,12 @@
 'use client'
+
 import { useState } from 'react'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { auth, db } from '@/lib/firebase'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -18,7 +20,7 @@ export default function LoginPage() {
       const userCred = await signInWithEmailAndPassword(auth, email, password)
       const uid = userCred.user.uid
       const roleSnap = await getDoc(doc(db, 'users', uid))
-      const role = roleSnap.data()?.role
+      const role = roleSnap.data()?.role || 'user'
 
       Cookies.set('token', await userCred.user.getIdToken())
       Cookies.set('role', role)
@@ -33,40 +35,50 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md p-8 bg-gray-900 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-blue-100 to-white">
+      <div className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl border border-gray-200">
+        <h2 className="text-3xl font-bold text-center text-green-600 mb-6 tracking-wide">
+          Smart Kantin Login
+        </h2>
 
         {message && (
           <div
-            className={`mb-4 p-3 rounded ${
-              type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}
+            className={`mb-4 p-3 rounded-md text-sm font-medium ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'
+              }`}
           >
             {message}
           </div>
         )}
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full p-2 mb-4 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full p-2 mb-4 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button
-          onClick={handleLogin}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Login
-        </button>
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Masukkan Email"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Masukkan Password"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            onClick={handleLogin}
+            className="w-full bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg transition duration-200"
+          >
+            Masuk
+          </button>
+        </div>
+
+        <p className="mt-6 text-sm text-center text-gray-500">
+          Belum punya akun?{' '}
+          <Link href="/auth/register" className="text-green-600 hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   )
